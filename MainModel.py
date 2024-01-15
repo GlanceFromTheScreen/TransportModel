@@ -17,11 +17,17 @@ class FourStepModel:
         Generates: origins O, destinations D, cost matrix c
         """
         self.O = np.array([98, 106, 122])
-        self.D = np.array([102, 118, 106])
-        self.c = np.array([[1.0, 6.2, 1.8],
-                           [6.2, 1.0, 1.5],
-                           [1.8, 1.5, 1.0]])
-        pass
+        self.D = np.array([102, 224])
+        # self.c = np.array([[1.0, 8.2, 1.8],
+        #                    [6.2, 6.0, 9.5],
+        #                    [11.8, 1.58, 1.0]])
+        self.c = np.array([[1.0, 2.0],
+                           [3.0, 4.0],
+                           [5.0, 6.0]])
+        # self.c = np.array([[1., 1.2, 1.8],
+        #                    [1.2, 1., 1.5],
+        #                    [1.8, 1.5, 1.]])
+
 
     TripDistribution = TripDistribution
     HymanCalibration = HymanCalibration
