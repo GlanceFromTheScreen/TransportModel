@@ -38,11 +38,6 @@ def TripDistribution(self, detterence_func=lambda x: 1 / x**2, eps=0.1):
 
     return {'ITERATIONS': ITERATIONS, 'Error': Error, 'O_': O_, 'D_': D_}
 
-    # print("ITERATIONS: ", ITERATIONS)
-    # print("ERROR: ", Error)
-    # print("O_ ", O_)
-    # print("D_ ", D_)
-    # print("T ", self.T)
 
 
 
