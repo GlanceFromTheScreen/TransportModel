@@ -29,8 +29,10 @@ def add_noise(model, noise):
 
 def GenerateSyntheticData(O_len, D_len, beta, noise=1):
 
+    c_scale_ratio = 4
+
     O, D = get_random_O_D(O_len, D_len)
-    c = np.random.rand(O_len, D_len) * 100
+    c = np.random.rand(O_len, D_len) * c_scale_ratio
 
     model = FourStepModel()
     model.O = O

@@ -8,7 +8,7 @@ if __name__ == '__main__':
     error_beta = []
     beta = 0.04
     N = 10
-    M = 1000
+    M = 100
 
     ###############################
     # k - percent of mean value of T, in range of with we may see random shift

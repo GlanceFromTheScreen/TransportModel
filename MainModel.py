@@ -1,6 +1,7 @@
 import numpy as np
 from trip_distribution import  TripDistribution
 from hyman_calibration import HymanCalibration
+from graphic_distribution import PlotDistribution
 
 class FourStepModel:
     def __init__(self):
@@ -31,6 +32,7 @@ class FourStepModel:
 
     TripDistribution = TripDistribution
     HymanCalibration = HymanCalibration
+    PlotDistribution = PlotDistribution
 
 
     def ModalSplit(self):
