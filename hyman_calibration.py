@@ -1,16 +1,18 @@
 import numpy as np
 import math
 
-def HymanCalibration(self, eps):
+
+def HymanCalibration(self, eps, c_star=None):
 
     ###############################
     # GIVEN: T* (or c*)
     # FIND: BEST BETA
     ###############################
 
-    c_star = np.sum(self.T * self.c) / np.sum(self.T)
+    if not c_star:  # заглушка для тестирования калибровки
+        c_star = np.sum(self.T * self.c) / np.sum(self.T)
+
     c_m = 0
-    c_prev = 0
 
     betta_0 = 1.5 / c_star
     betta = betta_0
@@ -20,7 +22,8 @@ def HymanCalibration(self, eps):
     while ITERATION_M < 5000:
 
         ITERATION_M += 1
-        self.TripDistribution(detterence_func=lambda x: math.exp(-betta * x))
+        tmp_res = self.TripDistribution(detterence_func=lambda x: math.exp(-betta * x))
+        # tmp_res = self.TripDistribution(detterence_func=lambda x: 1. / x ** betta)
 
         c_prev = c_m
         c_m = np.sum(self.T * self.c) / np.sum(self.T)

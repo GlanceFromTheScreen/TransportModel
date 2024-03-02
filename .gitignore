@@ -3,3 +3,5 @@
 /__pycache__
 /.idea
 pyvenv.cfg
+/lib_1d_minimization/__pycache__
+/data

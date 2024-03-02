@@ -32,7 +32,7 @@ def PlotDistribution(self):
     for i in range(len(gr_x)):
         hist_data += [gr_x[i]] * int(gr_y[i])
 
-    plt.hist(hist_data)
+    plt.hist(hist_data, bins=20)
     plt.xlabel('travel time')
     plt.ylabel('workers number')
     plt.show()

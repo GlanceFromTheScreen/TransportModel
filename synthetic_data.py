@@ -27,7 +27,7 @@ def add_noise(model, noise):
                 model.T[i, j] += (2 * random.random() - 1) * percent
 
 
-def GenerateSyntheticData(O_len, D_len, beta, noise=1):
+def GenerateSyntheticData(O_len, D_len, beta, noise=0):
 
     c_scale_ratio = 4
 
@@ -49,7 +49,7 @@ def GenerateSyntheticData(O_len, D_len, beta, noise=1):
 
     return model
 
-def GenerateSyntheticDataReversed(O_len, D_len, beta, rev_det_fun_type='exp', noise=1):
+def GenerateSyntheticDataReversed(O_len, D_len, beta, rev_det_fun_type='exp', noise=0):
 
     deterrence_functions = {'exp': lambda t: -1 * math.log(t) / beta if t != 0 else None,
                             'power': lambda t: 1 / t**(1/beta)}
