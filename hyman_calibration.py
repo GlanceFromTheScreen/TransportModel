@@ -23,7 +23,7 @@ def HymanCalibration(self, eps, c_star=None):
 
         ITERATION_M += 1
         tmp_res = self.TripDistribution(detterence_func=lambda x: math.exp(-betta * x))
-        # tmp_res = self.TripDistribution(detterence_func=lambda x: 1. / x ** betta)
+        # tmp_res = self.TripDistribution(detterence_func=lambda x: 1. / x ** betta if x != 0 else 999999.9)
 
         c_prev = c_m
         c_m = np.sum(self.T * self.c) / np.sum(self.T)

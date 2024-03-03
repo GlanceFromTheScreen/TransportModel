@@ -14,13 +14,12 @@ def TripDistribution(self, detterence_func=lambda x: 1 / x**2, eps=0.1):
 
     def detterence_func_preload(x):
         try:
-            res = detterence_func(x)
-            if res == float('infinity'):
-                return 999999.
-            else:
-                return res
+            return detterence_func(x)
         except OverflowError:
-            return 0
+            if x < 0:
+                return 0
+            else:
+                return 999999.9
 
     detterence_func2 = np.vectorize(detterence_func_preload)
     detterence_matrix = detterence_func2(self.c)
@@ -45,7 +44,8 @@ def TripDistribution(self, detterence_func=lambda x: 1 / x**2, eps=0.1):
                 A[i] = 1. / tmp[i]
             else:
                 A[i] = 1
-                print('i=',i,"\nO_i=",self.O[i])
+                if self.O[i] != 0:
+                    print('i=',i,"\nO_i=",self.O[i])
         # A = np.array([1. / tmp[i] for i in range(self.O.shape[0])])
         AOf = np.array((A * self.O) * detterence_matrix.T).T
 
@@ -55,7 +55,8 @@ def TripDistribution(self, detterence_func=lambda x: 1 / x**2, eps=0.1):
                 B[j] = 1. / tmp2
             else:
                 B[j] = 1
-                print('j=', j, "\nD_j=", self.D[j])
+                if self.D[j] != 0:
+                    print('j=', j, "\nD_j=", self.D[j])
 
 
         # B = np.array([1. / sum(AOf[:, j]) for j in range(self.D.shape[0])])
