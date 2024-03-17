@@ -21,7 +21,7 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001,):
     for i in range(1, TIMESTAMPS+1):
         curr = mini + i * (maxi - mini) / (TIMESTAMPS)
         time_arr += [curr]
-        if i > 1 and time_arr[-1] > MED > time_arr[-2]:
+        if i > 1 and time_arr[-1] >= MED > time_arr[-2]:
             MED_IND = i-1
 
 
@@ -75,12 +75,15 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001,):
 
     ans, n = p1.trial_point_method(eps)
     print('Метод равномерного поиска:\n', n, ' ', ((ans / eps) // 1) * eps, '+-', eps / 2, p1.target_function(ans))
-    # print(optimize.minimize(lambda x: abs(left(x) - right(x)), 1, bounds=scipy.optimize.Bounds(0, 1)))
+    # print(optimize.basinhopping(lambda x: abs(left(x) - right(x)), 0))
+    print(optimize.shgo(lambda x: abs(left(x) - right(x)), bounds=[(0, 1)]).x)
 
     print()
     x_axe = np.linspace(0, 50, 1000)
     plt.semilogy(x_axe, [p1.target_function(x) for x in x_axe])
     plt.show()
+
+    return {'beta': ans}
 
 
 

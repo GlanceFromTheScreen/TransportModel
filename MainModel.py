@@ -10,7 +10,7 @@ class FourStepModel:
         self.D = None
         self.c = None
         self.T = None
-        self.betta = 1
+        self.beta = 1
         self.T_split = None
         self.Final_flows_distribution = None
 

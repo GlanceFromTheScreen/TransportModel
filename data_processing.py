@@ -45,16 +45,26 @@ for index, row in districts.iterrows():
 distribution_time = pd.read_excel(file_path, sheet_name=2)
 c_star_time = 0
 for index, row in distribution_time.iterrows():
-    c_star_time += (row['UPPERLIMIT'] + row['LOWERLIMIT']) / 2 * row['SHARE']
+    c_star_time += ((row['UPPERLIMIT'] + row['LOWERLIMIT']) / 2 * row['SHARE'])
 
 distribution_distance = pd.read_excel(file_path, sheet_name=3)
 c_star_distance = 0
 for index, row in distribution_distance.iterrows():
-    c_star_distance += (row['UPPERLIMIT'] + row['LOWERLIMIT']) / 2 * row['SHARE']
+    c_star_distance += ((row['UPPERLIMIT'] + row['LOWERLIMIT']) / 2 * row['SHARE'])
 
 min_max_time = [distribution_time.iloc[0]['LOWERLIMIT'], distribution_time.iloc[-1]['UPPERLIMIT']]
 min_max_distance = [distribution_distance.iloc[0]['LOWERLIMIT'], distribution_distance.iloc[-1]['UPPERLIMIT']]
 
+hist_data_time = []
+for index, row in distribution_time.iterrows():
+    for s in range(int(row['LOWERLIMIT']), int(row['UPPERLIMIT']), 1):
+        hist_data_time += [s] * int(row['SHARE'] * 1000 / (row['UPPERLIMIT'] - row['LOWERLIMIT']))
+
+
+hist_data_distance = []
+for index, row in distribution_distance.iterrows():
+    for s in range(int(row['LOWERLIMIT']), int(row['UPPERLIMIT']), 1):
+        hist_data_distance += [s] * int(row['SHARE'] * 1000 / (row['UPPERLIMIT'] - row['LOWERLIMIT']))
 
 print('SERIALIZING DATA...')
 
@@ -84,6 +94,12 @@ with open("data/min_max_time.pickle", "wb") as file:
 
 with open("data/min_max_distance.pickle", "wb") as file:
     pickle.dump(min_max_distance, file)
+
+with open("data/hist_data_time.pickle", "wb") as file:
+    pickle.dump(hist_data_time, file)
+
+with open("data/hist_data_distance.pickle", "wb") as file:
+    pickle.dump(hist_data_distance, file)
 
 
 

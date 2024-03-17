@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 
-def HymanCalibration(self, eps, c_star=None):
+def HymanCalibration(self, eps, c_star=None, detterence_func=lambda x, beta: math.exp(-betta * x)):
 
     ###############################
     # GIVEN: T* (or c*)
@@ -22,7 +22,7 @@ def HymanCalibration(self, eps, c_star=None):
     while ITERATION_M < 5000:
 
         ITERATION_M += 1
-        tmp_res = self.TripDistribution(detterence_func=lambda x: math.exp(-betta * x))
+        tmp_res = self.TripDistribution(detterence_func=lambda x: detterence_func(x, betta))
 
         c_prev = c_m
         c_m = np.sum(self.T * self.c) / np.sum(self.T)
@@ -35,6 +35,6 @@ def HymanCalibration(self, eps, c_star=None):
             betta = betta_0 * c_m / c_star
 
         if abs(c_m - c_star) < eps:
-            return {'ITERATION_M': ITERATION_M, 'betta': betta, 'c_star': c_star, 'c_m': c_m}
+            return {'ITERATION_M': ITERATION_M, 'beta': betta, 'c_star': c_star, 'c_m': c_m}
 
 
