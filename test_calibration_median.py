@@ -1,7 +1,7 @@
 from MainModel import FourStepModel
 from synthetic_data import GenerateSyntheticData, GenerateSyntheticDataReversed
 import matplotlib.pyplot as plt
-import statistics
+import statistics as stat
 import numpy as np
 
 if __name__ == '__main__':
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     plt.legend()
     plt.show()
 
-    m.MedianCalibration(distr)
+    m.MedianCalibration(stat.median(distr), mini=np.min(distr), maxi=np.max(distr))
 
     print('cat')
 

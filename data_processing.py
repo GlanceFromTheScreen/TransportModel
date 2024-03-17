@@ -52,6 +52,10 @@ c_star_distance = 0
 for index, row in distribution_distance.iterrows():
     c_star_distance += (row['UPPERLIMIT'] + row['LOWERLIMIT']) / 2 * row['SHARE']
 
+min_max_time = [distribution_time.iloc[0]['LOWERLIMIT'], distribution_time.iloc[-1]['UPPERLIMIT']]
+min_max_distance = [distribution_distance.iloc[0]['LOWERLIMIT'], distribution_distance.iloc[-1]['UPPERLIMIT']]
+
+
 print('SERIALIZING DATA...')
 
 with open("data/c_matrix_time_it.pickle", "wb") as file:
@@ -74,6 +78,12 @@ with open("data/c_star_time.pickle", "wb") as file:
 
 with open("data/c_star_distance.pickle", "wb") as file:
     pickle.dump(c_star_distance, file)
+
+with open("data/min_max_time.pickle", "wb") as file:
+    pickle.dump(min_max_time, file)
+
+with open("data/min_max_distance.pickle", "wb") as file:
+    pickle.dump(min_max_distance, file)
 
 
 
