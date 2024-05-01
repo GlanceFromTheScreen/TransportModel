@@ -2,6 +2,7 @@ import numpy as np
 from trip_distribution import  TripDistribution
 from hyman_calibration import HymanCalibration
 from median_calibration import MedianCalibration
+from mse_calibration import MSECalibration
 from graphic_distribution import PlotDistribution
 
 class FourStepModel:
@@ -34,6 +35,7 @@ class FourStepModel:
     TripDistribution = TripDistribution
     HymanCalibration = HymanCalibration
     MedianCalibration = MedianCalibration
+    MSECalibration = MSECalibration
     PlotDistribution = PlotDistribution
 
 

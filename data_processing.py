@@ -56,15 +56,26 @@ min_max_time = [distribution_time.iloc[0]['LOWERLIMIT'], distribution_time.iloc[
 min_max_distance = [distribution_distance.iloc[0]['LOWERLIMIT'], distribution_distance.iloc[-1]['UPPERLIMIT']]
 
 hist_data_time = []
+data_time = {}
 for index, row in distribution_time.iterrows():
-    for s in range(int(row['LOWERLIMIT']), int(row['UPPERLIMIT']), 1):
-        hist_data_time += [s] * int(row['SHARE'] * 1000 / (row['UPPERLIMIT'] - row['LOWERLIMIT']))
+    points_count_in_interval =  int(row['SHARE'] * 1000)
+    for s in np.arange(int(row['LOWERLIMIT']),
+                   int(row['UPPERLIMIT']),
+                   int((row['UPPERLIMIT'] - row['LOWERLIMIT'])) * 1.0 / points_count_in_interval):
+        hist_data_time += [s]
+    data_time[tuple([row['LOWERLIMIT'], row['UPPERLIMIT']])] = row['SHARE']
 
 
 hist_data_distance = []
+data_distance = {}
 for index, row in distribution_distance.iterrows():
-    for s in range(int(row['LOWERLIMIT']), int(row['UPPERLIMIT']), 1):
-        hist_data_distance += [s] * int(row['SHARE'] * 1000 / (row['UPPERLIMIT'] - row['LOWERLIMIT']))
+    points_count_in_interval = int(row['SHARE'] * 1000)
+    for s in np.arange(int(row['LOWERLIMIT']),
+                   int(row['UPPERLIMIT']),
+                   int(row['UPPERLIMIT'] - row['LOWERLIMIT']) * 1.0 / points_count_in_interval):
+        hist_data_distance += [s]
+    data_distance[tuple([row['LOWERLIMIT'], row['UPPERLIMIT']])] = row['SHARE']
+
 
 print('SERIALIZING DATA...')
 
@@ -100,6 +111,14 @@ with open("data/hist_data_time.pickle", "wb") as file:
 
 with open("data/hist_data_distance.pickle", "wb") as file:
     pickle.dump(hist_data_distance, file)
+
+with open("data/data_time.pickle", "wb") as file:
+    pickle.dump(data_time, file)
+
+with open("data/data_distance.pickle", "wb") as file:
+    pickle.dump(data_distance, file)
+
+
 
 
 

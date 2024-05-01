@@ -35,6 +35,6 @@ def HymanCalibration(self, eps, c_star=None, detterence_func=lambda x, beta: mat
             betta = betta_0 * c_m / c_star
 
         if abs(c_m - c_star) < eps:
-            return {'ITERATION_M': ITERATION_M, 'beta': betta, 'c_star': c_star, 'c_m': c_m}
+            return {'ITERATION_M': ITERATION_M, 'beta': betta, 'c_star': c_star, 'c_m': c_m, 'target_function_value': abs(c_m - c_star)}
 
 

@@ -7,7 +7,7 @@ import scipy
 from scipy import optimize
 
 
-def MedianCalibration(self, MED, mini, maxi, eps=0.000001,):
+def MedianCalibration(self, MED, mini, maxi, eps=0.000001, detterence_function_type='POW'):
 
     ###############################
     # GIVEN: dictribution
@@ -18,11 +18,12 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001,):
     MED_IND = 0
 
     time_arr = []
-    for i in range(1, TIMESTAMPS+1):
-        curr = mini + i * (maxi - mini) / (TIMESTAMPS)
+    for i in range(0, TIMESTAMPS):
+        curr = 1 + i * (maxi - mini - 1) / (TIMESTAMPS-1)
         time_arr += [curr]
         if i > 1 and time_arr[-1] >= MED > time_arr[-2]:
-            MED_IND = i-1
+            # MED_IND = i-1
+            MED_IND = i
 
 
     print(MED_IND)
@@ -63,19 +64,20 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001,):
     # STEP 3: 1D minimization
     ###############################
 
-    left = lambda x: sum([table2[t] / time_arr[t]**x for t in range(0, MED_IND)])
-    right = lambda x: sum([table2[t] / time_arr[t]**x for t in range(MED_IND, TIMESTAMPS, 1)])
-    # left = lambda x: sum([table2[t] * math.exp(-time_arr[t] * x) for t in range(0, MED_IND+1)])
-    # right = lambda x: sum([table2[t] * math.exp(-time_arr[t] * x) for t in range(MED_IND+1, TIMESTAMPS, 1)])
+    if detterence_function_type == 'EXP':
+        left = lambda x: sum([table2[t] * math.exp(-time_arr[t] * x) for t in range(0, MED_IND+1)])
+        right = lambda x: sum([table2[t] * math.exp(-time_arr[t] * x) for t in range(MED_IND+1, TIMESTAMPS, 1)])
+    elif detterence_function_type == 'POW':
+        left = lambda x: sum([table2[t] / time_arr[t] ** x for t in range(0, MED_IND)])
+        right = lambda x: sum([table2[t] / time_arr[t] ** x for t in range(MED_IND, TIMESTAMPS, 1)])
 
     p1 = One_D_Problem()
     p1.target_function = lambda x: abs(left(x) - right(x))
     p1.left_border = 0
-    p1.right_border = 1
+    p1.right_border = 2
 
     ans, n = p1.trial_point_method(eps)
     print('Метод равномерного поиска:\n', n, ' ', ((ans / eps) // 1) * eps, '+-', eps / 2, p1.target_function(ans))
-    # print(optimize.basinhopping(lambda x: abs(left(x) - right(x)), 0))
     print(optimize.shgo(lambda x: abs(left(x) - right(x)), bounds=[(0, 1)]).x)
 
     print()
@@ -83,7 +85,7 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001,):
     plt.semilogy(x_axe, [p1.target_function(x) for x in x_axe])
     plt.show()
 
-    return {'beta': ans}
+    return {'beta': ans, 'target_function_value': p1.target_function(ans)}
 
 
 
