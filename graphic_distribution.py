@@ -21,8 +21,9 @@ def get_bins_for_chjsquare(hist_data, milestones):
     return bins
 
 
-def PlotDistribution(self, hist_to_compare=None, is_show=True):
+def PlotDistribution(self, hist_to_compare=None, is_show=True, mean_c = None):
 
+    # self.beta = self.beta if type(self.beta) == 'list' else [self.beta]
     gr_x = []
     gr_y = []
 
@@ -56,7 +57,7 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True):
     plt.hist(hist_data, bins=BINS_explicit, density=True, label='resulted hist', alpha=0.8)
     plt.xlabel('travel time')
     plt.ylabel('workers density')
-    plt.title(f'normalized distributions, beta={round(self.beta, 3)}')
+    plt.title(f'normalized distributions, beta={list(map(lambda x: round(x, 3), self.beta))}')
     plt.legend()
     if is_show:
         plt.show()
@@ -82,34 +83,34 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True):
     )
 
     pvalue_kstest = scipy.stats.ks_2samp(hist_to_compare, hist_data).pvalue
+    pvalue_anderson = scipy.stats.anderson_ksamp([hist_data, hist_to_compare]).pvalue
+    ttest = scipy.stats.ttest_ind(a=hist_data, b=hist_to_compare, equal_var=True)
 
     milestones = [10, 20, 30, 40, 50, 60]
-    # x1 = np.array(get_bins_for_chjsquare(hist_data, milestones))
-    # x2 = np.array(get_bins_for_chjsquare(hist_to_compare, milestones))  / len(hist_to_compare)
-    # pvalue_chisquare = scipy.stats.chisquare(x1, x2 * len(hist_data)).pvalue
-    #
-    # T_chi2 = np.sum((x1 - len(hist_data) * x2) ** 2 / (len(hist_data) * x2))
-    # pv_chi2 = 1 - scipy.stats.chi2.cdf(T_chi2, df=len(x1))
-    #
-    # pvalue_chisquare_2samp = scipy.stats.chi2_contingency([x1, x2 * len(hist_data)]).pvalue
+    x1 = np.array(get_bins_for_chjsquare(hist_data, milestones))
+    x2 = np.array(get_bins_for_chjsquare(hist_to_compare, milestones))
+    T_chi2 = len(hist_data) * np.sum((x1 - x2) ** 2 / (x2))
+    pv_chi2 = 1 - scipy.stats.chi2.cdf(T_chi2, df=len(x1))
 
-    #  works bad
-    pvalue_anderson = scipy.stats.anderson_ksamp([hist_data, hist_to_compare]).pvalue
-
+    if mean_c:
+        mean_diff = abs(np.mean(hist_data) - mean_c)
+        print('mean_diff: ', mean_diff)
 
     print('DIFFERENCE SUPREMUM: ', diff_supremum)
     print('DIFFERENCE MSE: ', diff_mse)
     print('pvalue_kstest: ', pvalue_kstest)
-    print('pvalue_chisquare: ', pvalue_chisquare)
-    print('pvalue_chisquare_2samp: ', pvalue_chisquare_2samp)
     print('pvalue_chi2: ', pv_chi2, 'T: ', T_chi2)
     print('pvalue_anderson: ', pvalue_anderson)
+    print('pvalue ttest: ', ttest.pvalue)
 
     return {
         'diff_supremum': diff_supremum,
         'diff_mse': diff_mse,
         'pvalue_kstest': pvalue_kstest,
-        'pvalue_chisquare': pvalue_chisquare
+        'pvalue_chisquare': pv_chi2,
+        'pvalue_anderson': pvalue_anderson,
+        'pvalue_ttest': ttest.pvalue,
+        'mean_diff': mean_diff if mean_c else None
     }
 
 

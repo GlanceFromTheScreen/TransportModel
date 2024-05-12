@@ -77,15 +77,15 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001, detterence_function_t
     p1.right_border = 2
 
     ans, n = p1.trial_point_method(eps)
-    print('Метод равномерного поиска:\n', n, ' ', ((ans / eps) // 1) * eps, '+-', eps / 2, p1.target_function(ans))
-    print(optimize.shgo(lambda x: abs(left(x) - right(x)), bounds=[(0, 1)]).x)
-
-    print()
+    # print('Метод равномерного поиска:\n', n, ' ', ((ans / eps) // 1) * eps, '+-', eps / 2, p1.target_function(ans))
+    # print(optimize.shgo(lambda x: abs(left(x) - right(x)), bounds=[(0, 1)]).x)
+    #
+    # print()
     x_axe = np.linspace(0, 50, 1000)
     plt.semilogy(x_axe, [p1.target_function(x) for x in x_axe])
     plt.show()
 
-    return {'beta': ans, 'target_function_value': p1.target_function(ans)}
+    return {'beta': [ans], 'target_function_value': p1.target_function(ans), 'nfev': None}
 
 
 
