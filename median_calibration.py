@@ -7,7 +7,7 @@ import scipy
 from scipy import optimize
 
 
-def MedianCalibration(self, MED, mini, maxi, eps=0.000001, detterence_function_type='POW'):
+def MedianCalibration(self, MED, mini, maxi, eps=0.000001, detterence_function_type='POW', is_show=False):
 
     ###############################
     # GIVEN: dictribution
@@ -58,18 +58,22 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001, detterence_function_t
     plt.xlabel('minutes')
     plt.ylabel('waighted population count')
     plt.title('table2')
-    plt.show()
+    if is_show:
+        plt.show()
 
     ###############################
     # STEP 3: 1D minimization
     ###############################
 
-    if detterence_function_type == 'EXP':
+    if detterence_function_type == 'exp':
         left = lambda x: sum([table2[t] * math.exp(-time_arr[t] * x) for t in range(0, MED_IND+1)])
         right = lambda x: sum([table2[t] * math.exp(-time_arr[t] * x) for t in range(MED_IND+1, TIMESTAMPS, 1)])
-    elif detterence_function_type == 'POW':
+    elif detterence_function_type == 'pow':
         left = lambda x: sum([table2[t] / time_arr[t] ** x for t in range(0, MED_IND)])
         right = lambda x: sum([table2[t] / time_arr[t] ** x for t in range(MED_IND, TIMESTAMPS, 1)])
+    else:
+        print('error in MED')
+        return None
 
     p1 = One_D_Problem()
     p1.target_function = lambda x: abs(left(x) - right(x))
@@ -83,9 +87,12 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001, detterence_function_t
     # print()
     x_axe = np.linspace(0, 50, 1000)
     plt.semilogy(x_axe, [p1.target_function(x) for x in x_axe])
-    plt.show()
+    if is_show:
+        plt.show()
 
-    return {'beta': [ans], 'target_function_value': p1.target_function(ans), 'nfev': None}
+    plt.close()
+
+    return {'beta': [ans], 'target_function_value': p1.target_function(ans), 'nfev': 0}
 
 
 

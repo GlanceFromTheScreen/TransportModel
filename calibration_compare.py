@@ -86,6 +86,22 @@ diff_supremum_m_p, diff_mse_m_p, pvalue_m_p, pvalue_chisquare_m_p, pvalue_anders
     itemgetter('diff_supremum', 'diff_mse', 'pvalue_kstest', 'pvalue_chisquare', 'pvalue_anderson', 'pvalue_ttest', 'mean_diff')
     (m.PlotDistribution(hist_data_distance, is_show=False, mean_c=c_star)))
 
+def ErrorMethodCompute(model, det_func, hist_compare, minimize_method, eps, c_star):
+    beta, tfv, n = itemgetter('beta', 'target_function_value', 'nfev')(m.MSECalibration(
+        detterance_func=det_func,
+        hist_to_compare=hist_compare,
+        minimization_method=minimize_method,
+        eps=eps
+    ))
+    model.beta = beta
+    model.TripDistribution(detterence_func=lambda x: det_func(x, m.beta), eps=eps)
+    diff_supremum, diff_mse, pvalue, pvalue_chisquare, pvalue_anderson, pvalue_ttest, mean_diff = (
+        itemgetter('diff_supremum', 'diff_mse', 'pvalue_kstest', 'pvalue_chisquare', 'pvalue_anderson', 'pvalue_ttest',
+                   'mean_diff')
+        (m.PlotDistribution(hist_compare, is_show=False, mean_c=c_star)))
+    return None
+
+
 print('\nError MSE pow:')
 
 beta_e_p, tfv_e_p, n_e_p = itemgetter('beta', 'target_function_value', 'nfev')(m.MSECalibration(

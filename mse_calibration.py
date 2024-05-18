@@ -28,8 +28,7 @@ def MSECalibration(self, detterance_func, hist_to_compare, eps=0.01, minimizatio
         one_dimention = False
 
     def get_mse(beta):
-
-        beta = list(beta) if type(beta) not in ['int', 'float'] else [beta]
+        beta = [beta] if type(beta).__name__ in ['int', 'float'] else list(beta)
 
         self.TripDistribution(detterence_func=lambda x: detterance_func(x, beta), eps=eps)
 
@@ -103,38 +102,56 @@ def MSECalibration(self, detterance_func, hist_to_compare, eps=0.01, minimizatio
     p1.left_border = 0
     p1.right_border = 2
 
-    bb = Bounds(lb=[0], ub=[2])
+    # bb = Bounds(lb=[0], ub=[2])
+    # bb2 = Bounds(lb=[-1,-1], ub=[2,2])
 
     if minimization_method == 'trial':
+        if not one_dimention:
+            return
         ans, n = p1.trial_point_method(eps)
     elif minimization_method == 'gold':
+        if not one_dimention:
+            return
         ans, n = p1.golden_search(eps)
     elif minimization_method == 'uniform':
+        if not one_dimention:
+            return
         ans, n = p1.uniform_search_method(accuracy=eps, n=6)
     elif minimization_method == 'nelder-mead':
         if one_dimention:
-            res = minimize(lambda x: get_mse(x), [0.06796875], method='nelder-mead', tol=eps, bounds=Bounds(lb=[-1], ub=[2]))
+            res = minimize(lambda x: get_mse(x), [0.3], method='nelder-mead', tol=eps, bounds=Bounds(lb=[-1], ub=[2]))
         else:
-            res = minimize(lambda x: get_mse(x), [0.06796875, 0.0007832], method='nelder-mead', tol=eps, bounds=Bounds(lb=[-1, -1], ub=[2, 2]))
+            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='nelder-mead', tol=eps, bounds=Bounds(lb=[-1, -1], ub=[2, 2]))
         ans = res.x
         n = res.nfev
-
     elif minimization_method == 'powell':
-        res = minimize(lambda x: get_mse(x), [0.06796875, 0.0007832], method='powell', tol=eps, bounds=Bounds(lb=[0,0], ub=[2,2]))
-        ans = res.x[0]
+        if one_dimention:
+            res = minimize(lambda x: get_mse(x), [0.3], method='powell', tol=eps, bounds=Bounds(lb=[0], ub=[2]), options={'maxiter': 3})
+        else:
+            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='powell', tol=eps, bounds=Bounds(lb=[0,0], ub=[2,2]), options={'maxiter': 3})
+        ans = res.x
         n = res.nfev
     elif minimization_method == 'SLSQP':
-        res = minimize(lambda x: get_mse(x[0]), [1], method='SLSQP', tol=eps, bounds=bb)
-        ans = res.x[0]
+        if one_dimention:
+            res = minimize(lambda x: get_mse(x), [0.3], method='SLSQP', bounds=Bounds(lb=[0], ub=[1]), options={'eps': eps})
+        else:
+            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='SLSQP', bounds=Bounds(lb=[0,0], ub=[1,1]), options={'eps': eps})
+        ans = res.x
         n = res.nfev
     elif minimization_method == 'GA':
-        ga = GA(func=lambda x: get_mse(x[0]), n_dim=1, size_pop=4, max_iter=4, prob_mut=0.01, lb=[0], ub=[1],
-                precision=eps)
+        max_iter = 10
+        size_pop = 10
+        if one_dimention:
+            ga = GA(func=lambda x: get_mse(x), n_dim=1, size_pop=size_pop, max_iter=max_iter, prob_mut=0.01, lb=[0], ub=[1],
+                    precision=eps)
+        else:
+            ga = GA(func=lambda x: get_mse(x), n_dim=2, size_pop=size_pop, max_iter=max_iter, prob_mut=0.01, lb=[0, 0], ub=[1, 1],
+                    precision=eps)
         best_x, best_y = ga.run()
-        ans = best_x[0]
-        n = None
+        ans = best_x
+        n = max_iter * size_pop
     print('1d min: ', ans, '\nfunction evaluations:', n, '\nerror: ', get_mse(ans))
 
 
-    return {'beta': list(ans) if type(ans) not in ['int', 'float'] else [ans], 'target_function_value': get_mse(ans), 'error': get_mse(ans), 'nfev': n}
+    return {'beta': [ans] if type(ans).__name__ in ['int', 'float'] else list(ans), 'target_function_value': get_mse(ans), 'error': get_mse(ans), 'nfev': n}
 

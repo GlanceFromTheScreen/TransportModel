@@ -26,8 +26,8 @@ print('OK.......')
 
 exclude_excess_rows_and_cols(m)
 
-# detterence_func=lambda x, beta: 1 / x**beta if x != 0 else 999999.9
-detterence_func=lambda x, beta: math.exp(-beta[0] * x)
+detterence_func=lambda x, beta: 1 / x**beta[0] if x != 0 else 999999.9
+# detterence_func=lambda x, beta: math.exp(-beta[0] * x)
 # detterence_func=lambda x, params: (x ** (-params[1])) * math.exp(-params[0] * x) if x != 0 else 999999.9
 
 # beta = m.MSECalibration(detterance_func=detterence_func, hist_to_compare=hist_data_distance)['beta']

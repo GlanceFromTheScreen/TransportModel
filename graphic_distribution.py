@@ -21,9 +21,10 @@ def get_bins_for_chjsquare(hist_data, milestones):
     return bins
 
 
-def PlotDistribution(self, hist_to_compare=None, is_show=True, mean_c = None):
+def PlotDistribution(self, hist_to_compare=None, is_show=True, is_save=[False, None], mean_c = None):
 
-    # self.beta = self.beta if type(self.beta) == 'list' else [self.beta]
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+
     gr_x = []
     gr_y = []
 
@@ -34,10 +35,6 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, mean_c = None):
 
     gr_x = np.array(gr_x)
     gr_y = np.array(gr_y)
-
-    # sorted_indices = np.argsort(gr_x)
-    # gr_x = gr_x[sorted_indices]
-    # gr_y = gr_y[sorted_indices]
 
     ###############################
     # each element in self.T implies that self.T_i_j workers
@@ -52,13 +49,15 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, mean_c = None):
     BINS_explicit = [0, 2, 4, 6, 8, 10, 15, 20, 25, 30, 40, 50, 90]
 
     if hist_to_compare:
-        plt.hist(hist_to_compare, bins=BINS_explicit, density=True, label='initial hist', alpha=0.8)
+        ax1.hist(hist_to_compare, bins=BINS_explicit, density=True, label='эмпирическая плотность распределения', alpha=0.8)
 
-    plt.hist(hist_data, bins=BINS_explicit, density=True, label='resulted hist', alpha=0.8)
-    plt.xlabel('travel time')
-    plt.ylabel('workers density')
-    plt.title(f'normalized distributions, beta={list(map(lambda x: round(x, 3), self.beta))}')
-    plt.legend()
+    ax1.hist(hist_data, bins=BINS_explicit, density=True, label='полученная плотность распределения', alpha=0.8)
+    ax1.set_xlabel('обобщенная цена пути (в минутах)')
+    ax1.set_ylabel('плотности распределений')
+    ax1.set_title(f'Гистограммы распределений, beta={list(map(lambda x: round(x, 3), self.beta))}')
+    ax1.legend()
+    # if is_save[0]:
+    #     ax1.savefig(f'images/hist_{is_save[1]}')
     if is_show:
         plt.show()
 
@@ -67,10 +66,16 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, mean_c = None):
     FREQ = 100
 
     x_axe = np.linspace(START, END, FREQ)
-    plt.plot(x_axe, [pf(x, hist_to_compare) for x in x_axe], label='initial pf')
-    plt.plot(x_axe, [pf(x, hist_data) for x in x_axe], label='resulted pf')
-    plt.title('probability functions')
-    plt.legend()
+    ax2.plot(x_axe, [pf(x, hist_to_compare) for x in x_axe], label='эмпирическая функция распределения')
+    ax2.plot(x_axe, [pf(x, hist_data) for x in x_axe], label='полученная функция распределения')
+    ax2.set_xlabel('обобщенная цена пути (в минутах)')
+    ax2.set_ylabel('распределение вероятностей')
+    ax2.set_title('функции распределения вероятностей')
+    ax2.legend()
+    # if is_save[0]:
+    #     ax2.savefig(f'images/pp_{is_save[1]}')
+    if is_save[0]:
+        fig.savefig(f'images/{is_save[1]}')
     if is_show:
         plt.show()
 
@@ -102,6 +107,8 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, mean_c = None):
     print('pvalue_chi2: ', pv_chi2, 'T: ', T_chi2)
     print('pvalue_anderson: ', pvalue_anderson)
     print('pvalue ttest: ', ttest.pvalue)
+
+    plt.close()
 
     return {
         'diff_supremum': diff_supremum,
