@@ -8,6 +8,8 @@ def TripDistribution(self, detterence_func=lambda x: 1 / x**2, eps=0.1):
     Generates: the list of correspondence matrices T (for each layer)
     """
 
+    eps = 0.01
+
     ###############################
     # INITIALIZE
     ###############################

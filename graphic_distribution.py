@@ -1,8 +1,10 @@
+import aux_data_tmp
 import numpy as np
 import math
 import matplotlib.pyplot as plt
 import scipy
 from statsmodels.stats.diagnostic import anderson_statistic
+from aux_data_tmp import TMP_N_ARR
 
 
 def pf(x, distr):
@@ -21,9 +23,12 @@ def get_bins_for_chjsquare(hist_data, milestones):
     return bins
 
 
-def PlotDistribution(self, hist_to_compare=None, is_show=True, is_save=[False, None], mean_c = None):
+def PlotDistribution(self, hist_to_compare=None, is_show=True, is_save=[False, None], mean_c = None, ITERATIONS = None):
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    if not ITERATIONS:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    else:
+        fig, (ax3, ax1, ax2) = plt.subplots(1, 3, figsize=(17, 5))
 
     gr_x = []
     gr_y = []
@@ -48,14 +53,47 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, is_save=[False, N
     BINS = 15
     BINS_explicit = [0, 2, 4, 6, 8, 10, 15, 20, 25, 30, 40, 50, 90]
 
-    if hist_to_compare:
-        ax1.hist(hist_to_compare, bins=BINS_explicit, density=True, label='эмпирическая плотность распределения', alpha=0.8)
+    if ITERATIONS:
+        print('TMP_N_ARR ', TMP_N_ARR)
+        if 'Hyman' in is_save[1]:
+            y_ax = TMP_N_ARR[-(ITERATIONS):]
+        else:
+            y_ax = TMP_N_ARR[-(ITERATIONS + 3):-3]
 
-    ax1.hist(hist_data, bins=BINS_explicit, density=True, label='полученная плотность распределения', alpha=0.8)
-    ax1.set_xlabel('обобщенная цена пути (в минутах)')
-    ax1.set_ylabel('плотности распределений')
-    ax1.set_title(f'Гистограммы распределений, beta={list(map(lambda x: round(x, 3), self.beta))}')
-    ax1.legend()
+        # yticks_tmp = [100, 10, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001]
+        # for item in yticks_tmp[1:]:
+        #     if max(y_ax) > item:
+        #         yticks_max = item * 10
+        #         break
+        #
+        # for item in yticks_tmp[::-1][1:]:
+        #     if min(y_ax) < item:
+        #         yticks_min = item / 10
+        #         break
+        #
+        # yticks = [item for item in yticks_tmp if item >= yticks_min and item <= yticks_max]
+        # print(yticks, yticks_min, yticks_max, min(y_ax), max(y_ax))
+
+        x_ax = np.arange(1, 200)
+        ax3.semilogy([x_ax[i] for i in range(len(y_ax))], y_ax, 'o-', label='значения целевой функции')
+        ax3.set_xlabel('номер итерации', fontsize=12)
+        ax3.set_ylabel('значения целевой функции', fontsize=12)
+        ax3.set_title('значения целевой функции', fontsize=14)
+        # ax3.set_yticks(yticks)
+        # ax3.set_aspect('equal', 'box')
+
+        TMP_N_ARR.clear()
+
+
+    if hist_to_compare:
+        ax1.hist(hist_to_compare, bins=BINS_explicit, density=True, label='эмпирическая\nплотность распределения', alpha=0.8)
+
+    ax1.hist(hist_data, bins=BINS_explicit, density=True, label='полученная\nплотность распределения', alpha=0.8)
+    ax1.set_xlabel('обобщенная цена пути (в минутах)', fontsize=12)
+    ax1.set_ylabel('плотности распределений', fontsize=12)
+    ax1.set_title(f'Гистограммы распределений, beta={list(map(lambda x: round(x, 3), self.beta))}', fontsize=14)
+    # ax1.set_aspect('equal', 'box')
+    ax1.legend(loc="upper right", fontsize=12)
     # if is_save[0]:
     #     ax1.savefig(f'images/hist_{is_save[1]}')
     if is_show:
@@ -66,12 +104,13 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, is_save=[False, N
     FREQ = 100
 
     x_axe = np.linspace(START, END, FREQ)
-    ax2.plot(x_axe, [pf(x, hist_to_compare) for x in x_axe], label='эмпирическая функция распределения')
-    ax2.plot(x_axe, [pf(x, hist_data) for x in x_axe], label='полученная функция распределения')
-    ax2.set_xlabel('обобщенная цена пути (в минутах)')
-    ax2.set_ylabel('распределение вероятностей')
-    ax2.set_title('функции распределения вероятностей')
-    ax2.legend()
+    ax2.plot(x_axe, [pf(x, hist_to_compare) for x in x_axe], label='эмпирическая\nфункция распределения')
+    ax2.plot(x_axe, [pf(x, hist_data) for x in x_axe], label='полученная функция\nраспределения')
+    ax2.set_xlabel('обобщенная цена пути (в минутах)', fontsize=12)
+    ax2.set_ylabel('распределение вероятностей', fontsize=12)
+    ax2.set_title('функции распределения вероятностей', fontsize=14)
+    # ax2.set_aspect('equal', 'box')
+    ax2.legend(loc='lower right', fontsize=12)
     # if is_save[0]:
     #     ax2.savefig(f'images/pp_{is_save[1]}')
     if is_save[0]:

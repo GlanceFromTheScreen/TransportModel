@@ -8,8 +8,7 @@ from scipy import optimize
 from graphic_distribution import pf, PlotDistribution, get_bins_for_chjsquare
 from scipy.optimize import minimize, Bounds, LinearConstraint
 from sko.GA import GA
-
-
+from aux_data_tmp import TMP_N_ARR
 
 
 def MSECalibration(self, detterance_func, hist_to_compare, eps=0.01, minimization_method = 'trial', aux_data = {'MSE': None}):
@@ -84,6 +83,10 @@ def MSECalibration(self, detterance_func, hist_to_compare, eps=0.01, minimizatio
             error = sum(((np.array(bins1) - np.array(bins2)))**2)
 
         print("....... ", beta, " -> ", error)
+
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        TMP_N_ARR.append(error)
+
         return error
 
     # beta_values = np.arange(0, 1, 0.1)
@@ -99,8 +102,8 @@ def MSECalibration(self, detterance_func, hist_to_compare, eps=0.01, minimizatio
 
     p1 = One_D_Problem()
     p1.target_function = lambda x: get_mse(x)
-    p1.left_border = 0
-    p1.right_border = 2
+    p1.left_border = -0.5
+    p1.right_border = 1.5
 
     # bb = Bounds(lb=[0], ub=[2])
     # bb2 = Bounds(lb=[-1,-1], ub=[2,2])
@@ -119,33 +122,33 @@ def MSECalibration(self, detterance_func, hist_to_compare, eps=0.01, minimizatio
         ans, n = p1.uniform_search_method(accuracy=eps, n=6)
     elif minimization_method == 'nelder-mead':
         if one_dimention:
-            res = minimize(lambda x: get_mse(x), [0.3], method='nelder-mead', tol=eps, bounds=Bounds(lb=[-1], ub=[2]))
+            res = minimize(lambda x: get_mse(x), [0.3], method='nelder-mead', tol=eps, bounds=Bounds(lb=[-0.5], ub=[1.5]))
         else:
-            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='nelder-mead', tol=eps, bounds=Bounds(lb=[-1, -1], ub=[2, 2]))
+            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='nelder-mead', tol=eps, bounds=Bounds(lb=[-0.5, -0.5], ub=[1.5, 1.5]))
         ans = res.x
         n = res.nfev
     elif minimization_method == 'powell':
         if one_dimention:
-            res = minimize(lambda x: get_mse(x), [0.3], method='powell', tol=eps, bounds=Bounds(lb=[0], ub=[2]), options={'maxiter': 3})
+            res = minimize(lambda x: get_mse(x), [0.3], method='powell', tol=eps, bounds=Bounds(lb=[-0.5], ub=[1.5]), options={'maxiter': 3})
         else:
-            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='powell', tol=eps, bounds=Bounds(lb=[0,0], ub=[2,2]), options={'maxiter': 3})
+            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='powell', tol=eps, bounds=Bounds(lb=[-0.5,-0.5], ub=[1.5,1.5]), options={'maxiter': 3})
         ans = res.x
         n = res.nfev
     elif minimization_method == 'SLSQP':
         if one_dimention:
-            res = minimize(lambda x: get_mse(x), [0.3], method='SLSQP', bounds=Bounds(lb=[0], ub=[1]), options={'eps': eps})
+            res = minimize(lambda x: get_mse(x), [0.3], method='SLSQP', bounds=Bounds(lb=[-0.5], ub=[1.5]), options={'eps': eps})
         else:
-            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='SLSQP', bounds=Bounds(lb=[0,0], ub=[1,1]), options={'eps': eps})
+            res = minimize(lambda x: get_mse(x), [0.3, 0.3], method='SLSQP', bounds=Bounds(lb=[-0.5,-0.5], ub=[1.5,1.5]), options={'eps': eps})
         ans = res.x
         n = res.nfev
     elif minimization_method == 'GA':
-        max_iter = 10
-        size_pop = 10
+        max_iter = 8
+        size_pop = 8
         if one_dimention:
-            ga = GA(func=lambda x: get_mse(x), n_dim=1, size_pop=size_pop, max_iter=max_iter, prob_mut=0.01, lb=[0], ub=[1],
+            ga = GA(func=lambda x: get_mse(x), n_dim=1, size_pop=size_pop, max_iter=max_iter, prob_mut=0.01, lb=[-0.5], ub=[1.5],
                     precision=eps)
         else:
-            ga = GA(func=lambda x: get_mse(x), n_dim=2, size_pop=size_pop, max_iter=max_iter, prob_mut=0.01, lb=[0, 0], ub=[1, 1],
+            ga = GA(func=lambda x: get_mse(x), n_dim=2, size_pop=size_pop, max_iter=max_iter, prob_mut=0.01, lb=[-0.5, -0.5], ub=[1.5, 1.5],
                     precision=eps)
         best_x, best_y = ga.run()
         ans = best_x

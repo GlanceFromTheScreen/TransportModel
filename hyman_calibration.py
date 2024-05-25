@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from aux_data_tmp import TMP_N_ARR
 
 
 def HymanCalibration(self, eps, c_star=None, detterence_func=lambda x, beta: math.exp(-betta * x)):
@@ -34,7 +35,12 @@ def HymanCalibration(self, eps, c_star=None, detterence_func=lambda x, beta: mat
         else:
             betta = betta_0 * c_m / c_star
 
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        TMP_N_ARR.append(abs(c_m - c_star))
+
         if abs(c_m - c_star) < eps:
             return {'nfev': ITERATION_M, 'beta': [betta], 'c_star': c_star, 'c_m': c_m, 'target_function_value': abs(c_m - c_star)}
+
+
 
 
