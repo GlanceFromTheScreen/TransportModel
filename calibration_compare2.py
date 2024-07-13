@@ -43,20 +43,31 @@ exclude_excess_rows_and_cols(m)
 DATA = 'distance'
 
 print('OK.......')
+print(mini, maxi, c_star, max([item for item in m.O if item < 12000]))
 
 detterence_func_pow=lambda x, beta: 1 / x**beta[0] if x != 0 else 999999.9
 detterence_func_exp=lambda x, beta: math.exp(-beta[0] * x)
 detterence_func_combined=lambda x, params: (x ** (-params[1])) * math.exp(-params[0] * x) if x != 0 else 999999.9
 
+# methods = {
+#     'Hyman': None,
+#     'MED': None,
+#     'MSE': None,
+#     'c_star_ORTUZAR': c_star,
+#     # 'c_star': c_star,
+#     'histogram_ERROR1': data_distance,
+#     'histogram_ERROR1_relative': data_distance,
+#     'histogram_ERROR2': data_distance
+# }
 methods = {
-    'Hyman': None,
+    # 'Hyman': None,
     'MED': None,
-    'MSE': None,
-    'c_star_ORTUZAR': c_star,
-    # 'c_star': c_star,
-    'histogram_ERROR1': data_distance,
-    'histogram_ERROR1_relative': data_distance,
-    'histogram_ERROR2': data_distance
+    # 'MSE': None,
+    # 'c_star_ORTUZAR': c_star,
+    # # 'c_star': c_star,
+    # 'histogram_ERROR1': data_distance,
+    # 'histogram_ERROR1_relative': data_distance,
+    # 'histogram_ERROR2': data_distance
 }
 # minimization = ['trial', 'nelder-mead', 'powell', 'SLSQP']
 minimization = ['trial', 'nelder-mead', 'powell', 'GA', 'SLSQP']
@@ -116,8 +127,8 @@ def getMethodDict(model, hist_to_compare, method='Hyman', min_method='trial', c_
                    'pvalue_ttest', 'mean_diff')
         (m.PlotDistribution(
             hist_to_compare,
-            is_show=False,
-            is_save=[True, DATA + "_" + det_func + "_" + method + "_" + min_method],
+            is_show=True,
+            is_save=[False, DATA + "_" + det_func + "_" + method + "_" + min_method],
             mean_c=c_star,
             ITERATIONS=methodDict['N']
         )))
@@ -164,7 +175,7 @@ for key, value in methods.items():
     for item in minimization:
         if (key == 'Hyman' and counted_Hyman) or (key=='MED' and counted_MED):
             continue
-        d = getMethodDict(model=m, hist_to_compare=hist_data_distance, method=key, min_method=item, aux_data_value=value, det_func='combined', eps=0.001)
+        d = getMethodDict(model=m, hist_to_compare=hist_data_distance, method=key, min_method=item, aux_data_value=value, det_func='pow', eps=0.001)
         if d:
             df1 = df1._append(filter_dict(d, l1), ignore_index=True)
             df2 = df2._append(filter_dict(d, l2), ignore_index=True)

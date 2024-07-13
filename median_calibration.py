@@ -26,7 +26,7 @@ def MedianCalibration(self, MED, mini, maxi, eps=0.000001, detterence_function_t
             MED_IND = i
 
 
-    print(MED_IND)
+    print(MED_IND, time_arr[MED_IND])
 
     ###############################
     # STEP 1: fill table1

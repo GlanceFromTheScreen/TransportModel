@@ -78,7 +78,7 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, is_save=[False, N
         ax3.semilogy([x_ax[i] for i in range(len(y_ax))], y_ax, 'o-', label='значения целевой функции')
         ax3.set_xlabel('номер итерации', fontsize=12)
         ax3.set_ylabel('значения целевой функции', fontsize=12)
-        ax3.set_title('значения целевой функции', fontsize=14)
+        ax3.set_title('значения целевой функции', fontsize=12)
         # ax3.set_yticks(yticks)
         # ax3.set_aspect('equal', 'box')
 
@@ -91,7 +91,7 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, is_save=[False, N
     ax1.hist(hist_data, bins=BINS_explicit, density=True, label='полученная\nплотность распределения', alpha=0.8)
     ax1.set_xlabel('обобщенная цена пути (в минутах)', fontsize=12)
     ax1.set_ylabel('плотности распределений', fontsize=12)
-    ax1.set_title(f'Гистограммы распределений, beta={list(map(lambda x: round(x, 3), self.beta))}', fontsize=14)
+    ax1.set_title(f'Гистограммы распределений, beta={list(map(lambda x: round(x, 3), self.beta))}', fontsize=12)
     # ax1.set_aspect('equal', 'box')
     ax1.legend(loc="upper right", fontsize=12)
     # if is_save[0]:
@@ -108,7 +108,7 @@ def PlotDistribution(self, hist_to_compare=None, is_show=True, is_save=[False, N
     ax2.plot(x_axe, [pf(x, hist_data) for x in x_axe], label='полученная функция\nраспределения')
     ax2.set_xlabel('обобщенная цена пути (в минутах)', fontsize=12)
     ax2.set_ylabel('распределение вероятностей', fontsize=12)
-    ax2.set_title('функции распределения вероятностей', fontsize=14)
+    ax2.set_title('функции распределения вероятностей', fontsize=12)
     # ax2.set_aspect('equal', 'box')
     ax2.legend(loc='lower right', fontsize=12)
     # if is_save[0]:
